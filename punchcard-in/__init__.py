@@ -9,6 +9,8 @@ import azure.functions as func
 femas_token = os.environ["FEMAS_TOKEN"]
 headers = {'Authorization': femas_token}
 femas_endpoint = 'https://fsapi.femascloud.com/freedomsystems/fsapi/V3/'
+
+# rest and special_rest are used for checking event type
 rest = "\u5047"
 special_rest = "\u7279\u4f11"
 
@@ -25,7 +27,6 @@ def femas_action(route: str, body: dict = None) -> dict:
     else:
         response = requests.post(f'{femas_endpoint}{route}', headers=headers)
     json_data = json.loads(response.content)
-
     return json_data
 
 def femas_need_punch() -> bool:

@@ -10,6 +10,10 @@ femas_token = os.environ["FEMAS_TOKEN"]
 headers = {'Authorization': femas_token}
 femas_endpoint = 'https://fsapi.femascloud.com/freedomsystems/fsapi/V3/'
 
+# rest and special_rest are used for checking event type
+rest = "\u5047"
+special_rest = "\u7279\u4f11"
+
 def main(mytimer: func.TimerRequest) -> None:
     body_punch_out = {"clockData": "2,1,E","latitude": "","longitude": ""}
     
@@ -32,7 +36,13 @@ def femas_need_punch() -> bool:
     is_holiday = response["response"]["datas"][today]["is_holiday"]
     events = response.get("response").get("datas").get(today).get("events", None)
 
-    if not is_holiday and not events:
-        return True
+    if is_holiday:
+        return False
 
-    return False
+    elif events:
+        for event in events:
+            event = event.get("event")
+            if (rest in event) or (special_rest in event):
+                return False
+        
+    return True
