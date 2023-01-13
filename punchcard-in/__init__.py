@@ -9,6 +9,8 @@ import azure.functions as func
 femas_token = os.environ["FEMAS_TOKEN"]
 headers = {'Authorization': femas_token}
 femas_endpoint = 'https://fsapi.femascloud.com/freedomsystems/fsapi/V3/'
+rest = "\u5047"
+special_rest = "\u7279\u4f11"
 
 def main(mytimer: func.TimerRequest) -> None:
     body_punch_in = {"clockData": "2,1,S","latitude": "","longitude": ""}
@@ -23,6 +25,7 @@ def femas_action(route: str, body: dict = None) -> dict:
     else:
         response = requests.post(f'{femas_endpoint}{route}', headers=headers)
     json_data = json.loads(response.content)
+
     return json_data
 
 def femas_need_punch() -> bool:
@@ -31,8 +34,14 @@ def femas_need_punch() -> bool:
     today = datetime.date.today().strftime("%Y-%m-%d")
     is_holiday = response["response"]["datas"][today]["is_holiday"]
     events = response.get("response").get("datas").get(today).get("events", None)
+    
+    if is_holiday:
+        return False
 
-    if not is_holiday and not events:
-        return True
-
-    return False
+    elif events:
+        for event in events:
+            event = event.get("event")
+            if (rest in event) or (special_rest in event):
+                return False
+        
+    return True
