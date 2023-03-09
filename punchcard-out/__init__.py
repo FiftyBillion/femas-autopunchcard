@@ -11,8 +11,8 @@ headers = {'Authorization': femas_token}
 femas_endpoint = 'https://fsapi.femascloud.com/freedomsystems/fsapi/V3/'
 
 # rest and special_rest are used for checking event type
-rest = "\u5047"
-special_rest = "\u7279\u4f11"
+rest = "\u5047" #ru84
+special_rest = "\u4f11" #vu. 
 
 def main(mytimer: func.TimerRequest) -> None:
     body_punch_out = {"clockData": "2,1,E","latitude": "","longitude": ""}
